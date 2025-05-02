@@ -2,6 +2,7 @@ import React, { useState, useEffect, JSX } from 'react';
 import './App.css';
 import { Employee, EmployeeWithReports, EmployeeListProps } from './types';
 import axios from 'axios';
+import { BASE_API_URL } from './config';
 
 function App(): JSX.Element {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -15,7 +16,7 @@ function App(): JSX.Element {
   const fetchEmployees = async (): Promise<void> => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:8080/employees');
+      const response = await axios.get(`${BASE_API_URL}/employees`);
       const responseData = response.data;
       
       if (response.status !== 200) {
@@ -71,10 +72,16 @@ function App(): JSX.Element {
     return roots;
   };
 
-  const EmployeeList: React.FC<EmployeeListProps> = ({ employee, level = 0 }) => {
-    const styles: ('disc' | 'circle' | 'square')[] = ['disc', 'circle', 'square'];
-    const listStyleType = styles[level % styles.length];
-  
+  const getListStyle = (level: number) => {
+    switch (level) {
+      case 0: return 'disc';
+      case 1: return 'circle';
+      case 2: return 'square';
+      default: return 'square';
+    }
+  };
+
+  const EmployeeList: React.FC<EmployeeListProps> = ({ employee, level = 1 }) => {
     return (
       <li>
         <span className="employee-info">
@@ -82,7 +89,7 @@ function App(): JSX.Element {
         </span>
   
         {employee.reports && employee.reports.length > 0 && (
-          <ul style={{ listStyleType }}>
+         <ul style={{ listStyleType: getListStyle(level + 1) }}>
             {employee.reports.map((report) => (
               <EmployeeList
                 key={report.id}
