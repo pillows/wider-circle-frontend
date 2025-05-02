@@ -1,46 +1,62 @@
-# Getting Started with Create React App
+# Org Chart Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This React application helps to visualize an organizational chart based on employee data fetched from a Go backend.
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+The Org Chart frontend renders employee data in a hierarchical nested list structure, displaying employee and manager relationships. Employees are sorted alphabetically by last name when a manager has multiple reports
 
-### `npm start`
+## Prerequisites
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Bun runtime (latest version)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Installation
 
-### `npm test`
+1. Clone the repository
+   ```
+   git clone https://github.com/yourusername/org-chart.git
+   cd org-chart/frontend
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Install dependencies
+   ```
+   bun install
+   ```
 
-### `npm run build`
+## Running the Application
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Start the development server:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+bun run start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The application will be available at http://localhost:3000
 
-### `npm run eject`
+## API Integration
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+The frontend communicates with the Go backend through a RESTful API located at http://localhost:8080. The main endpoint used is:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- `GET /employees` - Retrieves the employee list in JSON array format.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Implementation Details
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Data Structure
 
-## Learn More
+The employee data is transformed into a hierarchical structure for rendering:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```javascript
+{
+  id: string,
+  name: string,
+  title: string,
+  manager_id: string | null,
+  reports: Array<Employee>
+}
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Rendering Logic
+
+1. Employees are displayed with their full name and title
+2. Each employee is nested under their manager
+3. When a manager has multiple reports, they are sorted alphabetically by last name as per the spec on the assignment

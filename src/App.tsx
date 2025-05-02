@@ -110,6 +110,7 @@ function App(): JSX.Element {
     <div className="app">
       <h1>Organization Chart</h1>
       <div className="org-chart">
+      {/* In the event that the org chart is empty, display a message */}
       {orgChart.length === 0 && <div>No employees found.</div>}
       {orgChart.length > 0 && (
         <ul style={{ listStyleType: "disc" }}>
