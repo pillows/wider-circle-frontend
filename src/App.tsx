@@ -1,8 +1,9 @@
 import React, { useState, useEffect, JSX } from 'react';
 import './App.css';
-import { Employee, EmployeeWithReports, EmployeeListProps } from './types';
+import { Employee, EmployeeWithReports } from './types';
 import axios from 'axios';
 import { BASE_API_URL } from './config';
+import EmployeeList from './components/EmployeeList';
 
 function App(): JSX.Element {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -16,7 +17,7 @@ function App(): JSX.Element {
   const fetchEmployees = async (): Promise<void> => {
     try {
       setLoading(true);
-      const response = await axios.get(`${BASE_API_URL}/employees`);
+      const response = await axios.get(`${BASE_API_URL}/employee`);
       const responseData = response.data;
       
       if (response.status !== 200) {
@@ -31,7 +32,6 @@ function App(): JSX.Element {
       setLoading(false);
     }
   };
-
   
   const buildOrgChart = (flatEmployees: Employee[]): EmployeeWithReports[] => {
     const empMap: Record<number, EmployeeWithReports> = {};
@@ -51,7 +51,7 @@ function App(): JSX.Element {
       }
     });
     
-    // Sort reports by last name
+    // Helper function to get the last name from a full name
     const getLastName = (fullName: string): string => {
       const parts = fullName.split(' ');
       return parts[parts.length - 1];
@@ -70,37 +70,6 @@ function App(): JSX.Element {
     roots.forEach(sortReports);
     
     return roots;
-  };
-
-  const getListStyle = (level: number) => {
-    switch (level) {
-      case 0: return 'disc';
-      case 1: return 'circle';
-      case 2: return 'square';
-      default: return 'square';
-    }
-  };
-
-  const EmployeeList: React.FC<EmployeeListProps> = ({ employee, level = 1 }) => {
-    return (
-      <li>
-        <span className="employee-info">
-          {employee.title}: {employee.name}
-        </span>
-  
-        {employee.reports && employee.reports.length > 0 && (
-         <ul style={{ listStyleType: getListStyle(level + 1) }}>
-            {employee.reports.map((report) => (
-              <EmployeeList
-                key={report.id}
-                employee={report}
-                level={level + 1}
-              />
-            ))}
-          </ul>
-        )}
-      </li>
-    );
   };
   
   if (loading) {
